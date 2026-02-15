@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import LibraryList from "./LibraryList";
+import BookmarkButton from "./BookmarkButton";
 
 interface BookInfo {
   no: number;
@@ -22,6 +24,8 @@ interface LibraryInfo {
   libName: string;
   address: string;
   tel: string;
+  latitude: string;
+  longitude: string;
   homepage: string;
   closed: string;
   operatingTime: string;
@@ -71,7 +75,6 @@ export default function BookCard({ book, region, dtlRegion }: BookCardProps) {
     }
   };
 
-  // 책 제목에서 HTML 태그 제거
   const cleanTitle = book.bookname.replace(/<[^>]*>/g, "");
 
   return (
@@ -109,9 +112,12 @@ export default function BookCard({ book, region, dtlRegion }: BookCardProps) {
 
         {/* 책 정보 */}
         <div className="flex-1 min-w-0">
-          <h3 className="text-lg font-semibold text-gray-900 leading-tight">
+          <Link
+            href={`/book/${book.isbn13}`}
+            className="text-lg font-semibold text-gray-900 leading-tight hover:text-blue-600 transition-colors"
+          >
             {cleanTitle}
-          </h3>
+          </Link>
           <div className="mt-1.5 space-y-0.5 text-sm text-gray-600">
             <p>
               <span className="text-gray-400">저자</span>{" "}
@@ -129,7 +135,7 @@ export default function BookCard({ book, region, dtlRegion }: BookCardProps) {
             )}
           </div>
 
-          <div className="mt-3 flex items-center gap-3">
+          <div className="mt-3 flex items-center gap-2 flex-wrap">
             <button
               onClick={handleToggle}
               className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
@@ -153,6 +159,17 @@ export default function BookCard({ book, region, dtlRegion }: BookCardProps) {
               </svg>
               {expanded ? "도서관 숨기기" : "소장 도서관 찾기"}
             </button>
+            <BookmarkButton
+              book={{
+                isbn13: book.isbn13,
+                bookname: book.bookname,
+                authors: book.authors,
+                publisher: book.publisher,
+                publication_year: book.publication_year,
+                bookImageURL: book.bookImageURL,
+                class_nm: book.class_nm,
+              }}
+            />
             {book.loan_count > 0 && (
               <span className="text-xs text-gray-400">
                 누적 대출 {book.loan_count.toLocaleString()}회

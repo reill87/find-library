@@ -40,8 +40,18 @@ async function apiRequest<T>(
 export async function searchBooks(
   keyword: string,
   pageNo = 1,
-  pageSize = 10
+  pageSize = 10,
+  sort = "accuracy"
 ) {
+  const params: Record<string, string> = {
+    keyword,
+    pageNo: String(pageNo),
+    pageSize: String(pageSize),
+  };
+  if (sort && sort !== "accuracy") {
+    params.sort = sort;
+  }
+
   return apiRequest<{
     response: {
       resultNum: number;
@@ -64,11 +74,7 @@ export async function searchBooks(
         };
       }>;
     };
-  }>("srchBooks", {
-    keyword,
-    pageNo: String(pageNo),
-    pageSize: String(pageSize),
-  });
+  }>("srchBooks", params);
 }
 
 /**

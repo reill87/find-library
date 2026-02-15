@@ -1,10 +1,14 @@
 "use client";
 
+import LibraryMap from "./LibraryMap";
+
 interface LibraryInfo {
   libCode: string;
   libName: string;
   address: string;
   tel: string;
+  latitude: string;
+  longitude: string;
   homepage: string;
   closed: string;
   operatingTime: string;
@@ -75,6 +79,9 @@ export default function LibraryList({
         )}
       </div>
 
+      {/* 지도 */}
+      <LibraryMap libraries={libraries} />
+
       <div className="space-y-2 max-h-96 overflow-y-auto">
         {libraries.map((lib) => (
           <div
@@ -109,6 +116,18 @@ export default function LibraryList({
                 <div className="flex items-center gap-4 mt-1 text-xs text-gray-400">
                   {lib.tel && <span>TEL: {lib.tel}</span>}
                   {lib.closed && <span>휴관: {lib.closed}</span>}
+                  {lib.latitude &&
+                    lib.longitude &&
+                    parseFloat(lib.latitude) !== 0 && (
+                      <a
+                        href={`https://map.naver.com/v5/search/${encodeURIComponent(lib.libName)}?c=${lib.longitude},${lib.latitude},15,0,0,0,dh`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-500 hover:text-blue-700"
+                      >
+                        네이버 지도
+                      </a>
+                    )}
                 </div>
               </div>
               {lib.homepage && (

@@ -7,6 +7,7 @@ export async function GET(request: NextRequest) {
   const pageNo = parseInt(searchParams.get("pageNo") ?? "1");
   const pageSize = parseInt(searchParams.get("pageSize") ?? "10");
   const region = searchParams.get("region") ?? undefined;
+  const sort = searchParams.get("sort") ?? "accuracy";
 
   if (!keyword) {
     return NextResponse.json(
@@ -17,7 +18,7 @@ export async function GET(request: NextRequest) {
 
   try {
     // 키워드로 도서 검색
-    const result = await searchBooks(keyword, pageNo, pageSize);
+    const result = await searchBooks(keyword, pageNo, pageSize, sort);
     const docs = result.response.docs ?? [];
     const books = docs.map((d) => d.doc);
 

@@ -4,7 +4,12 @@ import { useState, FormEvent } from "react";
 import RegionSelect from "./RegionSelect";
 
 interface SearchFormProps {
-  onSearch: (keyword: string, region: string, dtlRegion: string) => void;
+  onSearch: (
+    keyword: string,
+    region: string,
+    dtlRegion: string,
+    sort: string
+  ) => void;
   isLoading: boolean;
 }
 
@@ -12,11 +17,13 @@ export default function SearchForm({ onSearch, isLoading }: SearchFormProps) {
   const [keyword, setKeyword] = useState("");
   const [region, setRegion] = useState("");
   const [dtlRegion, setDtlRegion] = useState("");
+  const [sort, setSort] = useState("accuracy");
+  const [showAdvanced, setShowAdvanced] = useState(false);
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     if (!keyword.trim()) return;
-    onSearch(keyword.trim(), region, dtlRegion);
+    onSearch(keyword.trim(), region, dtlRegion, sort);
   };
 
   return (
@@ -73,7 +80,43 @@ export default function SearchForm({ onSearch, isLoading }: SearchFormProps) {
             onRegionChange={setRegion}
             onDtlRegionChange={setDtlRegion}
           />
+          <button
+            type="button"
+            onClick={() => setShowAdvanced(!showAdvanced)}
+            className="ml-auto text-xs text-gray-400 hover:text-gray-600 transition-colors flex items-center gap-1"
+          >
+            <svg
+              className={`w-3 h-3 transition-transform ${showAdvanced ? "rotate-180" : ""}`}
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M19 9l-7 7-7-7"
+              />
+            </svg>
+            고급 검색
+          </button>
         </div>
+
+        {/* 고급 검색 옵션 */}
+        {showAdvanced && (
+          <div className="flex items-center gap-3 flex-wrap p-3 bg-gray-50 rounded-lg border border-gray-100">
+            <span className="text-sm text-gray-600 font-medium">정렬:</span>
+            <select
+              value={sort}
+              onChange={(e) => setSort(e.target.value)}
+              className="px-3 py-2 border border-gray-300 rounded-lg bg-white text-gray-700 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+              <option value="accuracy">정확도순</option>
+              <option value="new">최신순</option>
+              <option value="loan">대출건수순</option>
+            </select>
+          </div>
+        )}
       </div>
     </form>
   );

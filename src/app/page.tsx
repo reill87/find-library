@@ -27,6 +27,7 @@ export default function Home() {
   const [searchKeyword, setSearchKeyword] = useState("");
   const [searchRegion, setSearchRegion] = useState("");
   const [searchDtlRegion, setSearchDtlRegion] = useState("");
+  const [searchSort, setSearchSort] = useState("accuracy");
   const [error, setError] = useState<string | null>(null);
 
   const PAGE_SIZE = 10;
@@ -35,6 +36,7 @@ export default function Home() {
     keyword: string,
     region: string,
     dtlRegion: string,
+    sort: string,
     page = 1
   ) => {
     setIsLoading(true);
@@ -42,6 +44,7 @@ export default function Home() {
     setSearchKeyword(keyword);
     setSearchRegion(region);
     setSearchDtlRegion(dtlRegion);
+    setSearchSort(sort);
     setCurrentPage(page);
 
     try {
@@ -51,6 +54,7 @@ export default function Home() {
         pageSize: String(PAGE_SIZE),
       });
       if (region) params.set("region", region);
+      if (sort && sort !== "accuracy") params.set("sort", sort);
 
       const response = await fetch(`/api/search?${params.toString()}`);
       const data = await response.json();
@@ -77,25 +81,16 @@ export default function Home() {
 
   return (
     <div className="min-h-screen">
-      {/* 헤더 */}
-      <header className="bg-white border-b border-gray-200">
-        <div className="max-w-5xl mx-auto px-4 py-6">
-          <h1 className="text-2xl font-bold text-gray-900">
-            내 주변 도서관 책 찾기
-          </h1>
-          <p className="mt-1 text-sm text-gray-500">
-            읽고 싶은 주제를 입력하면, 주변 도서관에서 대출 가능한 책을
-            찾아드립니다.
-          </p>
-        </div>
-      </header>
-
       {/* 검색 영역 */}
       <div className="bg-white border-b border-gray-100 shadow-sm">
         <div className="max-w-5xl mx-auto px-4 py-6">
+          <p className="mb-4 text-sm text-gray-500">
+            읽고 싶은 주제를 입력하면, 주변 도서관에서 대출 가능한 책을
+            찾아드립니다.
+          </p>
           <SearchForm
-            onSearch={(keyword, region, dtlRegion) =>
-              handleSearch(keyword, region, dtlRegion, 1)
+            onSearch={(keyword, region, dtlRegion, sort) =>
+              handleSearch(keyword, region, dtlRegion, sort, 1)
             }
             isLoading={isLoading}
           />
@@ -176,6 +171,7 @@ export default function Home() {
                       searchKeyword,
                       searchRegion,
                       searchDtlRegion,
+                      searchSort,
                       currentPage - 1
                     )
                   }
@@ -208,6 +204,7 @@ export default function Home() {
                         searchKeyword,
                         searchRegion,
                         searchDtlRegion,
+                        searchSort,
                         page
                       )
                     }
@@ -228,6 +225,7 @@ export default function Home() {
                       searchKeyword,
                       searchRegion,
                       searchDtlRegion,
+                      searchSort,
                       currentPage + 1
                     )
                   }
